@@ -9,3 +9,5 @@ pytz
 aiohttp
 beautifulsoup4
 requests
+pillow
+
