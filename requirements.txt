@@ -10,4 +10,5 @@ aiohttp
 beautifulsoup4
 requests
 pillow
+imghdr-py
 
