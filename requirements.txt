@@ -1,0 +1,11 @@
+schedule==1.2.1
+telethon==1.32.0
+python-telegram-bot==13.15
+flask
+telegram
+apscheduler
+python-dotenv
+pytz
+aiohttp
+beautifulsoup4
+requests
