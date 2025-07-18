@@ -2,7 +2,6 @@
 import asyncio 
 import logging
 import re
-import json
 import os
 import schedule
 import time
@@ -27,19 +26,11 @@ CHANNEL_SOURCES = [
     "@ScontiOffertelFacileRisparmio"
 ]
 AMAZON_TRACKING_ID = "consigliere-21"
-FILE_POSTED = "posted_messages.json"
+
+# In memoria solo per sessione attuale
+posted_messages = set()
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-if os.path.exists(FILE_POSTED):
-    with open(FILE_POSTED, "r") as f:
-        posted_messages = set(json.load(f))
-else:
-    posted_messages = set()
-
-def save_posted_messages():
-    with open(FILE_POSTED, "w") as f:
-        json.dump(list(posted_messages), f)
 
 def sostituisci_tracking_amazon(text):
     return re.sub(
@@ -116,7 +107,8 @@ async def fetch_and_forward():
                     if messaggi_inviati >= max_messaggi:
                         break
 
-                    if not message.message or str(message.id) in posted_messages:
+                    unique_id = f"{source_channel}_{message.id}"
+                    if not message.message or unique_id in posted_messages:
                         continue
 
                     testo = message.message
@@ -181,8 +173,7 @@ async def fetch_and_forward():
                             messaggi_inviati += 1
 
                         logging.info(f"✅ Inviato da {source_channel}: {link_amazon}")
-                        posted_messages.add(str(message.id))
-                        save_posted_messages()
+                        posted_messages.add(unique_id)
 
                     except Exception as e:
                         logging.error(f"❌ Errore invio messaggio da {source_channel}: {e}")
